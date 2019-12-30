@@ -62,13 +62,6 @@ if(NOT BUILD_TEST)
     "True" "False")
 endif()
 
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/gtest/" AND BUILD_TEST)
-	message(STATUS "Building GTests!")
-	option(BUILD_GTEST "build gtest" ON)
-	add_subdirectory(gtest gtest)
-	enable_testing()
-endif()
-
 # Add CMake module path
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
@@ -77,6 +70,9 @@ install(DIRECTORY include/kindr DESTINATION include)
 
 # Add unit tests
 if(BUILD_GTEST)
+  message(STATUS "Building GTests!")
+	option(BUILD_GTEST "build gtest" ON)
+	enable_testing()
 	add_subdirectory(test)
 endif()
 

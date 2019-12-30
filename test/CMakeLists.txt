@@ -139,10 +139,10 @@ set(FORCE_SRCS
 add_gtest( runUnitTestsForce  ${FORCE_SRCS})
 
 # Run all unit tests post-build.
-add_custom_target(run_tests ALL
+add_custom_target(tests ALL
                   DEPENDS ${UNIT_TEST_TARGETS}
 )
-add_custom_command(TARGET run_tests
+add_custom_command(TARGET tests
                    COMMENT "Running tests"
                    POST_BUILD COMMAND ${PROJECT_SOURCE_DIR}/test/run_tests.py ${CMAKE_BINARY_DIR} ${UNIT_TEST_TARGETS}
                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
