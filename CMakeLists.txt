@@ -69,7 +69,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 install(DIRECTORY include/kindr DESTINATION include)
 
 # Add unit tests
-if(BUILD_GTEST)
+if(BUILD_TEST)
   message(STATUS "Building GTests!")
 	option(BUILD_GTEST "build gtest" ON)
 	enable_testing()
