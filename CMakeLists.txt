@@ -55,7 +55,6 @@ endif()
 add_definitions(-std=c++11)
 
 # Don't build tests if not specified.
-message(${BUILD_TEST})
 if(NOT BUILD_TEST)
   message(STATUS "Setting build-tests to false as not specified.")
   set(BUILD_TEST false CACHE BOOL "Choose whether to build tests." FORCE)
