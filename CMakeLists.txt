@@ -36,9 +36,9 @@ include_directories(include)
 include_directories(${EIGEN_INCLUDE_DIR})
 
 # Ensure Eigen version is at least 3.2
-if(${EIGEN_WORLD_VERSION} LESS "3" OR (${EIGEN_WORLD_VERSION} EQUAL "3" AND 
+if(${EIGEN_WORLD_VERSION} LESS "3" OR (${EIGEN_WORLD_VERSION} EQUAL "3" AND
    ${EIGEN_MAJOR_VERSION} LESS "2"))
-  message(FATAL_ERROR "Eigen must be of version 3.2 or higher. Detected version 
+  message(FATAL_ERROR "Eigen must be of version 3.2 or higher. Detected version
           ${EIGEN_WORLD_VERSION}.${EIGEN_MAJOR_VERSION}.${EIGEN_MINOR_VERSION}")
 else()
  message(STATUS "Using Eigen of version ${EIGEN_WORLD_VERSION}.${EIGEN_MAJOR_VERSION}.${EIGEN_MINOR_VERSION} from ${EIGEN_INCLUDE_DIR}")
@@ -55,6 +55,7 @@ endif()
 add_definitions(-std=c++11)
 
 # Don't build tests if not specified.
+message(${BUILD_TEST})
 if(NOT BUILD_TEST)
   message(STATUS "Setting build-tests to false as not specified.")
   set(BUILD_TEST false CACHE BOOL "Choose whether to build tests." FORCE)
@@ -65,14 +66,14 @@ endif()
 # Add CMake module path
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
-
 install(DIRECTORY include/kindr DESTINATION include)
 
 # Add unit tests
 if(BUILD_TEST)
+  find_package(catkin REQUIRED)
   message(STATUS "Building GTests!")
 	option(BUILD_GTEST "build gtest" ON)
-	enable_testing()
+  enable_testing()
 	add_subdirectory(test)
 endif()
 
@@ -86,11 +87,11 @@ add_subdirectory(doc/doxygen)
 #=============================================
 # to allow find_package() on kindr
 #=============================================
-# 
+#
 # the following case be used in an external project requiring kindr:
 #  ...
-#  find_package(kindr) 
-#  include_directories(${kindr_INCLUDE_DIRS}) 
+#  find_package(kindr)
+#  include_directories(${kindr_INCLUDE_DIRS})
 #  ...
 
 # NOTE: the following will support find_package for 1) local build (make) and 2) for installed files (make install)

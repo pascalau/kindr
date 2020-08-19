@@ -33,7 +33,7 @@ find_package(Eigen REQUIRED)
 include_directories(${EIGEN_INCLUDE_DIRS})
 include_directories(../include)
 
- 
+
 if (BUILD_GTEST)
 ################################
 # Unit Tests
@@ -57,14 +57,14 @@ macro(add_gtest target)
 endmacro(add_gtest)
 
 set(COMMON_SRCS
-      test_main.cpp 
+      test_main.cpp
       common/CommonTest.cpp
 )
 add_gtest(runUnitTestsCommon ${COMMON_SRCS})
 
 
 set(LINEARALGEBRA_SRCS
-      test_main.cpp 
+      test_main.cpp
       linear_algebra/SkewMatrixFromVectorTest.cpp
 			linear_algebra/PseudoInverseTest.cpp
 	)
@@ -139,10 +139,10 @@ set(FORCE_SRCS
 add_gtest( runUnitTestsForce  ${FORCE_SRCS})
 
 # Run all unit tests post-build.
-add_custom_target(tests ALL
+add_custom_target(gtests ALL
                   DEPENDS ${UNIT_TEST_TARGETS}
 )
-add_custom_command(TARGET tests
+add_custom_command(TARGET gtests
                    COMMENT "Running tests"
                    POST_BUILD COMMAND ${PROJECT_SOURCE_DIR}/test/run_tests.py ${CMAKE_BINARY_DIR} ${UNIT_TEST_TARGETS}
                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
