@@ -24,7 +24,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Project configuration
-cmake_minimum_required (VERSION 3.5)
+cmake_minimum_required(VERSION 3.5)
 
 ################################
 # Unit Tests
@@ -36,18 +36,18 @@ find_package(GTest REQUIRED)
 
 # This macro globs all tests to a list so we can run them post-build.
 macro(_add_gtest target)
-	set(sources  ${ARGV})
-	LIST(REMOVE_ITEM sources ${target})
-	add_executable(${target} ${sources})
-	message("Building test for " ${sources})
-	set(UNIT_TEST_TARGETS ${UNIT_TEST_TARGETS} ${target})
-	target_link_libraries(${target} ${PROJECT_NAME} GTest::GTest GTest::Main Eigen3::Eigen)
-	add_test(${target} ${target})
-	find_package(cmake_code_coverage QUIET)
-	if(cmake_code_coverage_FOUND)
-		add_gtest_coverage(TEST_BUILD_TARGETS ${target})
-	endif(cmake_code_coverage_FOUND)
-endmacro(_add_gtest)
+  set(sources  ${ARGV})
+  list(REMOVE_ITEM sources ${target})
+  add_executable(${target} ${sources})
+  message("Building test for " ${sources})
+  set(UNIT_TEST_TARGETS ${UNIT_TEST_TARGETS} ${target})
+  target_link_libraries(${target} ${PROJECT_NAME} GTest::GTest GTest::Main Eigen3::Eigen)
+  add_test(${target} ${target})
+  find_package(cmake_code_coverage QUIET)
+  if(cmake_code_coverage_FOUND)
+    add_gtest_coverage(TEST_BUILD_TARGETS ${target})
+  endif()
+endmacro()
 
 set(COMMON_SRCS
       test_main.cpp
@@ -59,75 +59,75 @@ _add_gtest(runUnitTestsCommon ${COMMON_SRCS})
 set(LINEARALGEBRA_SRCS
       test_main.cpp
       linear_algebra/SkewMatrixFromVectorTest.cpp
-			linear_algebra/PseudoInverseTest.cpp
-	)
+      linear_algebra/PseudoInverseTest.cpp
+)
 _add_gtest(runUnitTestsLinearAlgebra ${LINEARALGEBRA_SRCS})
 
 set(QUATERNIONS_SRCS
-	test_main.cpp
-	quaternions/QuaternionTest.cpp
+  test_main.cpp
+  quaternions/QuaternionTest.cpp
 )
 _add_gtest( runUnitTestsQuaternions ${QUATERNIONS_SRCS} )
 
 set(ROTATION_SRCS
-	test_main.cpp
-	rotations/RotationMatrixTest.cpp
-	rotations/RotationQuaternionTest.cpp
-	rotations/RotationVectorTest.cpp
-	rotations/AngleAxisTest.cpp
-	rotations/RotationMatrixTest.cpp
-	rotations/EulerAnglesZyxTest.cpp
-	rotations/EulerAnglesXyzTest.cpp
-	rotations/RotationTest.cpp
-	rotations/ConventionTest.cpp
+  test_main.cpp
+  rotations/RotationMatrixTest.cpp
+  rotations/RotationQuaternionTest.cpp
+  rotations/RotationVectorTest.cpp
+  rotations/AngleAxisTest.cpp
+  rotations/RotationMatrixTest.cpp
+  rotations/EulerAnglesZyxTest.cpp
+  rotations/EulerAnglesXyzTest.cpp
+  rotations/RotationTest.cpp
+  rotations/ConventionTest.cpp
 
 )
 _add_gtest( runUnitTestsRotation ${ROTATION_SRCS})
 
 
 set(ROTATIONDIFF_SRCS
-	test_main.cpp
-	rotations/RotationDiffTest.cpp
-	rotations/LocalAngularVelocityTest.cpp
-	rotations/GlobalAngularVelocityTest.cpp
-	rotations/RotationQuaternionDiffTest.cpp
-	rotations/RotationMatrixDiffTest.cpp
-	rotations/EulerAnglesZyxDiffTest.cpp
-	rotations/EulerAnglesXyzDiffTest.cpp
+  test_main.cpp
+  rotations/RotationDiffTest.cpp
+  rotations/LocalAngularVelocityTest.cpp
+  rotations/GlobalAngularVelocityTest.cpp
+  rotations/RotationQuaternionDiffTest.cpp
+  rotations/RotationMatrixDiffTest.cpp
+  rotations/EulerAnglesZyxDiffTest.cpp
+  rotations/EulerAnglesXyzDiffTest.cpp
 )
 _add_gtest( runUnitTestsRotationDiff ${ROTATIONDIFF_SRCS})
 
 set(POSITIONS_SRCS
-	test_main.cpp
+  test_main.cpp
 
 )
 _add_gtest( runUnitTestsPositions  ${POSITIONS_SRCS})
 
 set(POSES_SRCS
-	test_main.cpp
-	poses/PositionTest.cpp
-	poses/HomogeneousTransformationTest.cpp
+  test_main.cpp
+  poses/PositionTest.cpp
+  poses/HomogeneousTransformationTest.cpp
 )
 _add_gtest( runUnitTestsPose  ${POSES_SRCS})
 
 set(POSESDIFF_SRCS
-	test_main.cpp
-	poses/PoseDiffTest.cpp
-	poses/PositionDiffTest.cpp
-	poses/TwistWithAngularVelocityTest.cpp
+  test_main.cpp
+  poses/PoseDiffTest.cpp
+  poses/PositionDiffTest.cpp
+  poses/TwistWithAngularVelocityTest.cpp
 )
 _add_gtest( runUnitTestsPoseDiff  ${POSESDIFF_SRCS})
 
 set(VECTOR_SRCS
-	test_main.cpp
-	vectors/VectorsTest.cpp
+  test_main.cpp
+  vectors/VectorsTest.cpp
 )
 _add_gtest( runUnitTestsVector  ${VECTOR_SRCS})
 
 set(PHYS_QUANT_SRCS
-	test_main.cpp
-	phys_quant/ForceTest.cpp
-	phys_quant/WrenchTest.cpp
-	phys_quant/ScalarTest.cpp
+  test_main.cpp
+  phys_quant/ForceTest.cpp
+  phys_quant/WrenchTest.cpp
+  phys_quant/ScalarTest.cpp
 )
 _add_gtest( runUnitTestsPhysQuant  ${PHYS_QUANT_SRCS})

@@ -23,7 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required(VERSION 3.5)
 
 #--------------------------#
 # Documentation
@@ -33,7 +33,7 @@ cmake_minimum_required (VERSION 2.8)
 find_package(Doxygen)
 if(DOXYGEN)
   set(DOC_OUTPUT_DIR ${PROJECT_BINARY_DIR}/doc)
-  set(DOXYGEN_IMAGE_DIRS "\"${CMAKE_CURRENT_SOURCE_DIR}/figures/\"" )
+  set(DOXYGEN_IMAGE_DIRS "\"${CMAKE_CURRENT_SOURCE_DIR}/figures/\"")
   set(DOXYGEN_SOURCE_DIRS "${DOXYGEN_SOURCE_DIRS} \"${CMAKE_CURRENT_SOURCE_DIR}\" ")
   set(DOXYGEN_SOURCE_DIRS "${DOXYGEN_SOURCE_DIRS} \"${CMAKE_CURRENT_SOURCE_DIR}/../../include/\" ")
 
@@ -47,8 +47,8 @@ if(DOXYGEN)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doxygen.config.in ${DOC_OUTPUT_DIR}/doxygen.config IMMEDIATE)
 
   add_custom_target(kindr_doc ${DOXYGEN} ${DOC_OUTPUT_DIR}/doxygen.config)
-else(DOXYGEN)
+else()
   message(STATUS "Doxygen not found")
-endif(DOXYGEN)
+endif()
 
 #-------------------------#
