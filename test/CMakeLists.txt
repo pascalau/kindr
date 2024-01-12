@@ -24,17 +24,8 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Project configuration
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 3.5)
 
-add_definitions(-std=c++11)
-
-find_package(Eigen REQUIRED)
-
-include_directories(${EIGEN_INCLUDE_DIRS})
-include_directories(../include)
-
-
-if (BUILD_GTEST)
 ################################
 # Unit Tests
 ################################
@@ -42,8 +33,7 @@ if (BUILD_GTEST)
 # GTest
 ################################
 
-include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
-include_directories(test)
+find_package(GTest REQUIRED)
 
 # This macro globs all tests to a list so we can run them post-build.
 macro(add_gtest target)
@@ -52,7 +42,7 @@ macro(add_gtest target)
   add_executable(${target} ${sources})
   message("Building test for " ${sources})
   set(UNIT_TEST_TARGETS ${UNIT_TEST_TARGETS} ${target})
-  target_link_libraries(${target} gtest gtest_main pthread)
+  target_link_libraries(${target} ${PROJECT_NAME} GTest::GTest GTest::Main Eigen3::Eigen)
   add_test(${target} ${target})
 endmacro(add_gtest)
 
@@ -137,14 +127,3 @@ set(FORCE_SRCS
 	phys_quant/WrenchTest.cpp
 )
 add_gtest( runUnitTestsForce  ${FORCE_SRCS})
-
-# Run all unit tests post-build.
-add_custom_target(gtests ALL
-                  DEPENDS ${UNIT_TEST_TARGETS}
-)
-add_custom_command(TARGET gtests
-                   COMMENT "Running tests"
-                   POST_BUILD COMMAND ${PROJECT_SOURCE_DIR}/test/run_tests.py ${CMAKE_BINARY_DIR} ${UNIT_TEST_TARGETS}
-                   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-)
-endif()

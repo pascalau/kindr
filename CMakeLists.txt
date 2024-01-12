@@ -24,54 +24,35 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Project configuration
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required(VERSION 3.5)
 
-project(kindr)
+project(kindr
+  VERSION 0.0.0
+  LANGUAGES CXX
+)
 
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
-
-find_package(Eigen REQUIRED)
-include_directories(include)
-include_directories(${EIGEN_INCLUDE_DIR})
-
-# Ensure Eigen version is at least 3.2
-if(${EIGEN_WORLD_VERSION} LESS "3" OR (${EIGEN_WORLD_VERSION} EQUAL "3" AND
-   ${EIGEN_MAJOR_VERSION} LESS "2"))
-  message(FATAL_ERROR "Eigen must be of version 3.2 or higher. Detected version
-          ${EIGEN_WORLD_VERSION}.${EIGEN_MAJOR_VERSION}.${EIGEN_MINOR_VERSION}")
-else()
- message(STATUS "Using Eigen of version ${EIGEN_WORLD_VERSION}.${EIGEN_MAJOR_VERSION}.${EIGEN_MINOR_VERSION} from ${EIGEN_INCLUDE_DIR}")
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 11)
 endif()
 
-# Noisily default to Release build
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-  message(STATUS "Setting build type to 'Release' as none was specified.")
-  set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
-  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
-    "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+# Output more warnings
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-add_definitions(-std=c++11)
+# Dependencies
+find_package(Eigen3 REQUIRED)
 
-# Don't build tests if not specified.
-if(NOT BUILD_TEST)
-  message(STATUS "Setting build-tests to false as not specified.")
-  set(BUILD_TEST false CACHE BOOL "Choose whether to build tests." FORCE)
-  set_property(CACHE BUILD_TEST PROPERTY STRINGS
-    "True" "False")
-endif()
+# Add header library target
+add_library(${PROJECT_NAME} INTERFACE)
+target_include_directories(${PROJECT_NAME} INTERFACE 
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+	$<INSTALL_INTERFACE:include>)
 
-# Add CMake module path
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
-
-install(DIRECTORY include/kindr DESTINATION include)
+target_link_libraries(${PROJECT_NAME} INTERFACE Eigen3::Eigen)
 
 # Add unit tests
-if(BUILD_TEST)
-  find_package(catkin REQUIRED)
-  message(STATUS "Building GTests!")
-	option(BUILD_GTEST "build gtest" ON)
+if(BUILD_TESTING)
   enable_testing()
 	add_subdirectory(test)
 endif()
@@ -79,55 +60,52 @@ endif()
 # Add Doxygen documentation
 add_subdirectory(doc/doxygen)
 
-# Install catkin package.xml
-#install(FILES package.xml DESTINATION share/kindr)
+# Include helper packages
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
 
+# Install library
+install(TARGETS ${PROJECT_NAME}
+  EXPORT ${PROJECT_NAME}_export
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(DIRECTORY include/
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-#=============================================
-# to allow find_package() on kindr
-#=============================================
-#
-# the following case be used in an external project requiring kindr:
-#  ...
-#  find_package(kindr)
-#  include_directories(${kindr_INCLUDE_DIRS})
-#  ...
+# Export library target
+export(EXPORT ${PROJECT_NAME}_export
+  FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake
+  NAMESPACE ${PROJECT_NAME}::)
+install(EXPORT ${PROJECT_NAME}_export
+  FILE ${PROJECT_NAME}Targets.cmake
+  NAMESPACE ${CMAKE_PROJECT_NAME}::
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/cmake)
 
-# NOTE: the following will support find_package for 1) local build (make) and 2) for installed files (make install)
+# Generate Version.cmake and Config.cmake file
+write_basic_package_version_file(
+  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
+  VERSION ${PROJECT_VERSION}
+  COMPATIBILITY SameMajorVersion)
 
-# 1- local build #
+set(INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_INCLUDEDIR})
+configure_package_config_file(
+  cmake/${PROJECT_NAME}Config.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+  INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/cmake
+  PATH_VARS INCLUDE_INSTALL_DIR)
 
-# Register the local build in case one doesn't use "make install"
-export(PACKAGE kindr)
-
-# Create variable for the local build tree
-get_property(kindr_include_dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-
-# Configure config file for local build tree
-configure_file(kindrConfig.cmake.in
-  "${PROJECT_BINARY_DIR}/kindrConfig.cmake" @ONLY)
-
-# 2- installation build #
-
-# Change the include location for the case of an install location
-set(kindr_include_dirs ${CMAKE_INSTALL_PREFIX}/include ${EIGEN_INCLUDE_DIR})
-
-
-# We put the generated file for installation in a different repository (i.e., ./CMakeFiles/)
-configure_file(kindrConfig.cmake.in
-  "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/kindrConfig.cmake" @ONLY)
-
-install(FILES
-  "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/kindrConfig.cmake"
-  DESTINATION share/kindr/cmake COMPONENT dev)
-
+install(FILES 
+${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
+${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/cmake)
 
 
 #=============================================
 # Add uninstall target
 #=============================================
 configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
+    cmake/"${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
     "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
     IMMEDIATE @ONLY)
 

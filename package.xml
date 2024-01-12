@@ -19,7 +19,6 @@
 
   <buildtool_depend>cmake</buildtool_depend>
   <depend>eigen</depend>
-  <exec_depend>catkin</exec_depend>
   <doc_depend>doxygen</doc_depend>
   <doc_depend>texlive-latex-base</doc_depend>
 
