@@ -36,10 +36,10 @@
 
 namespace kindr {
 
+//! Twist, i.e. generalized 6D velocity in screw algebra.
 template<typename PrimType_, typename PositionDiff_, typename RotationDiff_>
 class Twist : public PoseDiffBase<Twist<PrimType_, PositionDiff_, RotationDiff_> >, private PositionDiff_, private RotationDiff_ {
  public:
-
   typedef PrimType_ Scalar;
   typedef PositionDiff_ PositionDiff;
   typedef RotationDiff_ RotationDiff;
@@ -94,6 +94,13 @@ class Twist : public PoseDiffBase<Twist<PrimType_, PositionDiff_, RotationDiff_>
     RotationDiff::setZero();
     return *this;
   }
+
+  /*! \brief Get zero twist
+   *  \returns zero twist
+   */
+  static Twist Zero() {
+    return Twist(PositionDiff::Zero(), RotationDiff::Zero());
+  }
 };
 
 template<typename PrimType_>
@@ -114,13 +121,18 @@ class TwistLinearVelocityRotationQuaternionDiff: public Twist<PrimType_,
     Base(positionDiff, rotationDiff) {
   }
 
+  /*! \brief Get zero twist
+   *  \returns zero twist
+   */
+  static TwistLinearVelocityRotationQuaternionDiff Zero() {
+    return TwistLinearVelocityRotationQuaternionDiff(PositionDiff::Zero(), RotationDiff::Zero());
+  }
 };
-
 
 typedef TwistLinearVelocityRotationQuaternionDiff<double> TwistLinearVelocityRotationQuaternionDiffD;
 typedef TwistLinearVelocityRotationQuaternionDiff<float> TwistLinearVelocityRotationQuaternionDiffF;
 
-
+//! Body twist, i.e. twist where the angular velocity is expressed in the local body frame.
 template<typename PrimType_>
 class TwistLinearVelocityLocalAngularVelocity: public Twist<PrimType_,
                                                            Velocity<PrimType_, 3>,
@@ -168,6 +180,12 @@ class TwistLinearVelocityLocalAngularVelocity: public Twist<PrimType_,
     this->getRotationalVelocity().toImplementation() = vector6.template tail<3>();
   }
 
+  /*! \brief Get zero twist
+   *  \returns zero twist
+   */
+  static TwistLinearVelocityLocalAngularVelocity Zero() {
+    return TwistLinearVelocityLocalAngularVelocity(PositionDiff::Zero(), RotationDiff::Zero());
+  }
 };
 
 typedef TwistLinearVelocityLocalAngularVelocity<double> TwistLinearVelocityLocalAngularVelocityD;
@@ -177,6 +195,7 @@ typedef TwistLinearVelocityLocalAngularVelocity<float> TwistLinearVelocityLocalA
 typedef TwistLinearVelocityLocalAngularVelocity<double> TwistLocalD;
 typedef TwistLinearVelocityLocalAngularVelocity<float> TwistLocalF;
 
+//! Spatial twist, i.e. twist where the angular velocity is expressed in the global parent frame.
 template<typename PrimType_>
 class TwistLinearVelocityGlobalAngularVelocity: public Twist<PrimType_,
                                                            Velocity<PrimType_, 3>,
@@ -224,9 +243,13 @@ class TwistLinearVelocityGlobalAngularVelocity: public Twist<PrimType_,
     this->getRotationalVelocity().toImplementation() = vector6.template tail<3>();
   }
 
+  /*! \brief Get zero twist
+   *  \returns zero twist
+   */
+  static TwistLinearVelocityGlobalAngularVelocity Zero() {
+    return TwistLinearVelocityGlobalAngularVelocity(PositionDiff::Zero(), RotationDiff::Zero());
+  }
 };
-
-
 
 typedef TwistLinearVelocityGlobalAngularVelocity<double> TwistLinearVelocityGlobalAngularVelocityD;
 typedef TwistLinearVelocityGlobalAngularVelocity<float> TwistLinearVelocityGlobalAngularVelocityF;
@@ -234,6 +257,5 @@ typedef TwistLinearVelocityGlobalAngularVelocity<double> TwistLinearVelocityGlob
 typedef TwistLinearVelocityGlobalAngularVelocity<float> TwistLinearVelocityGlobalAngularVelocityPF;
 typedef TwistLinearVelocityGlobalAngularVelocity<double> TwistGlobalD;
 typedef TwistLinearVelocityGlobalAngularVelocity<float> TwistGlobalF;
-
 
 } // namespace kindr

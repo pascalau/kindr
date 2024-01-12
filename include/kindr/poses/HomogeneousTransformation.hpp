@@ -73,11 +73,7 @@ class HomogeneousTransformation : public PoseBase<HomogeneousTransformation<Prim
    *  \param other   other transformation
    *  \returns reference
    */
-  HomogeneousTransformation& operator =(const HomogeneousTransformation& other) {
-    position_ = Position(other.getPosition());
-    rotation_ = Rotation(other.getRotation());
-    return *this;
-  }
+  HomogeneousTransformation& operator =(const HomogeneousTransformation& other) = default;
 
   inline Position_ & getPosition() {
     return position_;
@@ -124,6 +120,13 @@ class HomogeneousTransformation : public PoseBase<HomogeneousTransformation<Prim
     position_.setZero();
     rotation_.setIdentity();
     return *this;
+  }
+
+  /*! \brief Get identity pose.
+   *  \returns identity pose
+   */
+  static HomogeneousTransformation Identity() {
+    return HomogeneousTransformation(Position::Zero(), Rotation::Identity());
   }
 };
 

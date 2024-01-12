@@ -3,7 +3,7 @@
 <package format="2">
 
   <name>kindr</name>
-  <version>1.3.0</version>
+  <version>1.3.18</version>
   <description>Kinematics and Dynamics for Robotics</description>
 
   <license>BSD</license>
@@ -21,6 +21,8 @@
   <depend>eigen</depend>
   <doc_depend>doxygen</doc_depend>
   <doc_depend>texlive-latex-base</doc_depend>
+  <test_depend>gtest</test_depend>
+  <test_depend>cmake_code_coverage</test_depend>
 
   <export>
     <!-- Specify that this is not really a ROS package-->

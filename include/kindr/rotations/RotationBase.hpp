@@ -214,21 +214,26 @@ class RotationBase {
    */
   Derived_& setIdentity();
 
+  /*! \brief Get identity rotation.
+   *  \returns identity rotation
+   */
+  static Derived_ Identity();
+
   /*! \brief Sets the rotation to a random one.
    * \return  reference to modified rotation
    */
   Derived_& setRandom() {
-   internal::RandomTraits<RotationBase<Derived_>>::set_random(this->derived());
-   return *this;
+    internal::RandomTraits<RotationBase<Derived_>>::set_random(this->derived());
+    return *this;
   }
 
-  /*! \brief Returns a random rotation.
-   * \return  reference to modified rotation
+  /*! \brief Create a random rotation.
+   * \return  new random rotation
    */
-  Derived_ getRandom() const {
-   Derived_ other;
-   internal::RandomTraits<RotationBase<Derived_>>::set_random(other);
-   return other;
+  static Derived_ getRandom() {
+    Derived_ rotation;
+    internal::RandomTraits<RotationBase<Derived_>>::set_random(rotation);
+    return rotation;
   }
 
   /*! \brief Returns the rotation in a unique form
@@ -251,12 +256,20 @@ class RotationBase {
     return internal::MultiplicationTraits<RotationBase<Derived_>,RotationBase<OtherDerived_>>::mult(this->derived(), other.derived()); // todo: 1. ok? 2. may be optimized
   }
 
-  /*! \brief Compares two rotations.
+  /*! \brief Equality comparison of two rotations.
    *  \returns true if the rotations are exactly equal
    */
   template<typename OtherDerived_>
   bool operator ==(const RotationBase<OtherDerived_>& other) const { // todo: may be optimized
     return internal::ComparisonTraits<RotationBase<Derived_>, RotationBase<OtherDerived_>>::isEqual(this->derived().getUnique(), other.derived().getUnique()); // the type conversion must already take place here to ensure the specialised isequal function is called more often
+  }
+
+  /*! \brief Inequality comparison of two rotations.
+  *   \returns true if the rotations are not exactly equal
+  */
+  template<typename OtherDerived_>
+  bool operator !=(const RotationBase<OtherDerived_>& other) const {
+    return !(*this == other);
   }
 
   /*! \brief Gets the disparity angle between two rotations for comparison.
@@ -314,12 +327,12 @@ class RotationBase {
     return internal::RotationTraits<RotationBase<Derived_>>::rotate(this->derived().inverted(), vector);
   }
 
-  /*! \brief Sets the rotation using an exponential map @todo avoid altering the rotation
+  /*! \brief Creates a rotation from an exponential map.
    * \param vector  Eigen::Matrix<Scalar 3, 1>
-   * \return  reference to modified rotation
+   * \return  new rotation
    */
-  Derived_ exponentialMap(const typename internal::get_matrix3X<Derived_>::template Matrix3X<1>& vector)  {
-   return internal::MapTraits<RotationBase<Derived_>>::set_exponential_map(vector);
+  static Derived_ exponentialMap(const typename internal::get_matrix3X<Derived_>::template Matrix3X<1>& vector) {
+    return internal::MapTraits<RotationBase<Derived_>>::get_exponential_map(vector);
   }
 
   /*! \brief Gets the logarithmic map from the rotation
@@ -336,6 +349,7 @@ class RotationBase {
   typename internal::get_matrix3X<Derived_>::template Matrix3X<1> boxMinus(const RotationBase<OtherDerived_>& other) const {
     return internal::BoxOperationTraits<RotationBase<Derived_>, RotationBase<OtherDerived_>>::box_minus(this->derived(), other.derived());
   }
+
   /*! \brief Applies the box plus operation
    * \returns rotation
    */
@@ -343,6 +357,20 @@ class RotationBase {
     return internal::BoxOperationTraits<RotationBase<Derived_>, RotationBase<Derived_>>::box_plus(this->derived(), vector);
   }
 
+  /*! \brief Interpolate between two rotations.
+   * \param other Rotation to interpolate towards.
+   * \param ratio Interpolation ratio between 0 and 1. Returns self when 0, and other when 1.
+   * \returns Interpolated rotation.
+   */
+  template<typename OtherDerived_>
+  Derived_ interpolate(const RotationBase<OtherDerived_>& other, double ratio) const {
+    if (ratio > 1.) {
+      ratio = 1.;
+    } else if (ratio < 0.) {
+      ratio = 0.;
+    }
+    return this->boxPlus(other.boxMinus(*this) * ratio);
+  }
 
   /*! \brief Sets the rotation C_IB from two vectors such that I_v = C_IB*B_v i.e.
    * I_v = this->rotate(B_v).

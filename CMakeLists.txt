@@ -31,6 +31,12 @@ project(kindr
   LANGUAGES CXX
 )
 
+# Include helper packages
+include(CTest)
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+# Set C++ 11
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 11)
 endif()
@@ -59,10 +65,6 @@ endif()
 
 # Add Doxygen documentation
 add_subdirectory(doc/doxygen)
-
-# Include helper packages
-include(GNUInstallDirs)
-include(CMakePackageConfigHelpers)
 
 # Install library
 install(TARGETS ${PROJECT_NAME}
@@ -105,7 +107,7 @@ ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
 # Add uninstall target
 #=============================================
 configure_file(
-    cmake/"${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
     "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
     IMMEDIATE @ONLY)
 

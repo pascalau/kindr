@@ -52,7 +52,7 @@ class UnitQuaternion;
  * \see rm::rotations::RotationQuaternion for quaternions that represent a rotation
  */
 template<typename PrimType_>
-class Quaternion : public QuaternionBase<Quaternion<PrimType_>>, private Eigen::Quaternion<PrimType_> {
+class Quaternion : public QuaternionBase<Quaternion<PrimType_>>, public Eigen::Quaternion<PrimType_> {
  private:
   typedef Eigen::Quaternion<PrimType_> Base;
  public:
@@ -126,13 +126,7 @@ class Quaternion : public QuaternionBase<Quaternion<PrimType_>>, private Eigen::
     return *this;
   }
 
-  Quaternion& operator =(const Quaternion<PrimType_>& other) {
-    this->w() = other.w();
-    this->x() = other.x();
-    this->y() = other.y();
-    this->z() = other.z();
-    return *this;
-  }
+  Quaternion& operator =(const Quaternion<PrimType_>& other) = default;
 
   Quaternion& operator =(const UnitQuaternion<PrimType_>& other) {
     *this = Quaternion(other.toImplementation());
@@ -171,6 +165,7 @@ class Quaternion : public QuaternionBase<Quaternion<PrimType_>>, private Eigen::
   }
 
   using QuaternionBase<Quaternion<PrimType_>>::operator==;
+  using QuaternionBase<Quaternion<PrimType_>>::operator!=;
   using QuaternionBase<Quaternion<PrimType_>>::operator*;
 
   inline Scalar w() const {
@@ -238,6 +233,13 @@ class Quaternion : public QuaternionBase<Quaternion<PrimType_>>, private Eigen::
     this->y() = Scalar(0.0);
     this->z() = Scalar(0.0);
     return *this;
+  }
+
+  /*! \brief Get zero element.
+   *  \returns zero element
+   */
+  static Quaternion Zero() {
+    return Quaternion();
   }
 
   UnitQuaternion<PrimType_> toUnitQuaternion() const {
@@ -353,13 +355,7 @@ class UnitQuaternion : public UnitQuaternionBase<UnitQuaternion<PrimType_>> {
     KINDR_ASSERT_SCALAR_NEAR_DBG(std::runtime_error, norm(), static_cast<Scalar>(1.0), static_cast<Scalar>(1e-2), "Input quaternion has not unit length.");
   }
 
-  UnitQuaternion& operator =(const UnitQuaternion<PrimType_>& other) {
-	    this->w() = other.w();
-	    this->x() = other.x();
-	    this->y() = other.y();
-	    this->z() = other.z();
-	    return *this;
-  }
+  UnitQuaternion& operator =(const UnitQuaternion<PrimType_>& other) = default;
 
   template<typename PrimTypeIn_>
   UnitQuaternion& operator ()(const UnitQuaternion<PrimTypeIn_>& other) {
@@ -472,6 +468,24 @@ class UnitQuaternion : public UnitQuaternionBase<UnitQuaternion<PrimType_>> {
 
   Scalar norm() const {
     return unitQuternion_.norm();
+  }
+
+  /*! \brief Sets unit quaternion to identity.
+   *  \returns reference
+   */
+  UnitQuaternion& setIdentity() {
+    this->w() = Scalar(0.0);
+    this->x() = Scalar(0.0);
+    this->y() = Scalar(0.0);
+    this->z() = Scalar(0.0);
+    return *this;
+  }
+
+  /*! \brief Get identity unit quaternion.
+   *  \returns identity unit quaternion
+   */
+  static UnitQuaternion Identity() {
+    return UnitQuaternion(Implementation::Identity());
   }
 
   const Implementation& toImplementation() const {
