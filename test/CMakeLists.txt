@@ -24,7 +24,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Project configuration
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.16.3)
 
 ################################
 # Unit Tests

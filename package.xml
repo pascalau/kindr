@@ -1,15 +1,9 @@
-<?xml version="1.0"?>
-
-<package format="2">
+<?xml version='1.0' encoding='utf-8'?>
+<package format="3">
 
   <name>kindr</name>
-  <version>1.3.18</version>
+  <version>1.3.24</version>
   <description>Kinematics and Dynamics for Robotics</description>
-
-  <license>BSD</license>
-  <url type="repository">https://github.com/anybotics/kindr</url>
-  <maintainer email="rdiethelm@anybotics.com">Remo Diethelm</maintainer>
-  <maintainer email="pleemann@anybotics.com">Philipp Leemann</maintainer>
   <author email="bloeschm@ethz.ch">Michael Bloesch</author>
   <author>Remo Diethelm</author>
   <author>Péter Fankhauser</author>
@@ -17,8 +11,13 @@
   <author>Christian Gehring</author>
   <author>Hannes Sommer</author>
 
-  <buildtool_depend>cmake</buildtool_depend>
+  
+  <maintainer email="rdiethelm@anybotics.com">Remo Diethelm</maintainer>
+  <maintainer email="pleemann@anybotics.com">Philipp Leemann</maintainer>
+  <license>BSD</license>
+  <url type="repository">https://github.com/anybotics/kindr</url>
   <depend>eigen</depend>
+  <buildtool_depend>cmake</buildtool_depend>
   <doc_depend>doxygen</doc_depend>
   <doc_depend>texlive-latex-base</doc_depend>
   <test_depend>gtest</test_depend>
@@ -27,5 +26,4 @@
     <!-- Specify that this is not really a ROS package-->
     <build_type>cmake</build_type>
   </export>
-
 </package>
